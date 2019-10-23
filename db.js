@@ -27,8 +27,11 @@ module.exports = class DB {
                     err.lastQuery = sql
 					reject(err)
 				}else
-                    results = new DBResults(...results)
+                    if( Array.isArray(results) )
+                        results = new DBResults(...results)
+
                     results.fromQuery = sql
+
 					resolve(results)
 			})
 		})

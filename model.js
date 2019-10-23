@@ -33,6 +33,10 @@ module.exports = class Model {
 // =================================================
     
     constructor(attrs, req){
+
+        if( !db )
+            console.warn('Model: `db` has not been set yet')
+            
         this.db = db
         this.req = req
         this.attrs = {}

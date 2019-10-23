@@ -1,0 +1,15 @@
+{
+    "name": "blackstone-ui",
+    "version": "1.0.0",
+    "description": "Classes and tools for the backend of a BUI application",
+    "main": "index.js",
+    "homepage": "https://kjantzer.github.io/bui-server",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kjantzer/bui-server"
+    },
+    "scripts": {},
+    "keywords": [],
+    "author": "Kevin Jantzer, Blackstone Publishing",
+    "license": "MIT"
+}

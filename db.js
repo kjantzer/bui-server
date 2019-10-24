@@ -26,13 +26,15 @@ module.exports = class DB {
 					console.info(sql);
                     err.lastQuery = sql
 					reject(err)
-				}else
-                    if( Array.isArray(results) )
-                        results = new DBResults(...results)
+                    return
+                }
 
-                    results.fromQuery = sql
+                if( Array.isArray(results) )
+                    results = new DBResults(...results)
 
-					resolve(results)
+                results.fromQuery = sql
+
+                resolve(results)
 			})
 		})
 	}

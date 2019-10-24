@@ -39,7 +39,7 @@ module.exports = class Model {
             
         this.db = db
         this.req = req
-        this.attrs = {}
+        this.attrs = attrs || {}
 
         for(let key in attrs){
             this[key] = attrs[key]
@@ -97,9 +97,9 @@ module.exports = class Model {
             whereVals.push(where[key])
         }
 
-        let resp = await db.q(/*sql*/`
-                    ${this.findSql()}
-                    WHERE ${whereFields.join(' AND ')}`, whereVals)
+        where = whereFields.length > 0 ? `WHERE ${whereFields.join(' AND ')}` : ''
+
+        let resp = await db.query(`${this.findSql()} ${where}`, whereVals)
 
         // parse each row (for decoding JSON strings, etc)
         await Promise.all(resp.map(row=>{
@@ -116,6 +116,17 @@ module.exports = class Model {
         }
 
         return resp;
+    }
+
+    async add(attrs={}){
+
+        if( !this.config.table ) throw Error('missing config.table')
+
+        if( !attrs || Object.keys(attrs).length == 0 )
+            return false;
+
+        let result = await db.q(/*sql*/`INSERT INTO ${this.config.table} SET ?`, attrs)
+        return String(result.affectedRows)
     }
 
     async update(attrs={}){

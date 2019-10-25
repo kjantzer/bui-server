@@ -126,7 +126,12 @@ module.exports = class Model {
             return false;
 
         let result = await db.q(/*sql*/`INSERT INTO ${this.config.table} SET ?`, attrs)
-        return String(result.affectedRows)
+        
+        if( !result.insertId )
+            throw Error('failed to insert')    
+
+        this.id = result.insertId
+        return await this.find()
     }
 
     async update(attrs={}){

@@ -3,7 +3,54 @@ Realtime (via Socket.io)
 
 ## Sync
 
-Documentation needed
+```js
+// server
+// More documentation needed
+
+const Sync = require('bui-server/realtime/server/sync')
+let sync = new Sync(io)
+
+class Book {
+    constructor(attrs){
+        this.id = attrs.id
+    }
+
+    update(attrs){
+        // update model...
+
+        // then sync the data to all clients
+        this.syncData(attrs)
+    }
+}
+
+sync.add('/api/book/:id', Book)
+```
+
+```js
+// client
+import sync from 'bui-server/realtime/client/sync'
+
+export class MyModel {
+
+    get url(){ return '/api/book'+this.id }
+
+    constructor(){
+        this.realtimeSync = sync(this.url(), this)
+    }
+
+    // this will be called when the model gets sync data
+    onSync(data){
+    }
+}
+
+let myModel = new MyModel()
+
+// must call `connect` to begin keeping the model in sync
+myModel.realtimeSync.connect()
+
+// ... later the connection can be closed to stop syncing
+myModel.realtimeSync.close()
+```
 
 
 ## Views

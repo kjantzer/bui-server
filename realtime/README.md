@@ -1,6 +1,11 @@
 Realtime (via Socket.io)
 =========================
 
+## Sync
+
+Documentation needed
+
+
 ## Views
 Provides an easy way to keep track of views that are opened by clients
 

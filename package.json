@@ -1,5 +1,5 @@
 {
-    "name": "blackstone-ui",
+    "name": "bui-server",
     "version": "1.0.0",
     "description": "Classes and tools for the backend of a BUI application",
     "main": "index.js",
@@ -11,5 +11,9 @@
     "scripts": {},
     "keywords": [],
     "author": "Kevin Jantzer, Blackstone Publishing",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies":{
+        "socket.io": "^2.3.0",
+        "url-pattern": "^1.0.3"
+    }
 }

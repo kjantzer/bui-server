@@ -145,7 +145,11 @@ module.exports = class Model {
             return false;
 
         let result = await db.q(/*sql*/`UPDATE ${this.config.table} SET ? WHERE ?`, [attrs, {id:this.id}])
-        return String(result.affectedRows)
+
+        if( result.affectedRows > 0 )
+            return attrs
+        
+        return false
     }
 
     async destroy(){

@@ -95,24 +95,29 @@ module.exports = class MyModel extends Model {
         tableAlias: false
     }}
 
+    // alter the where clause
     findWhere(where){
-        // add or manipulate the where clause
+        // defaults to noop
     }
 
     findSql(){
+        // this is the default query
         return /*sql*/`SELECT * FROM ${this.config.table}`
     }
 
     findParseRow(row){
+        // defaults to noop, only passing the row along as-is
         return row
     }
 
+    // alter the attributes before updating
     validateUpdate(attrs){
         return attrs
     }
 
+    // do something before destroying the model in the database
     beforeDestroy(){
-        // nothing to do
+        // defaults to noop
     }
 
 }

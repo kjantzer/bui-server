@@ -30,12 +30,12 @@ sync.add('/api/book/:id', Book)
 // client
 import sync from 'bui-server/realtime/client/sync'
 
-export class MyModel {
+export class Book {
 
     get url(){ return '/api/book'+this.id }
 
     constructor(){
-        this.realtimeSync = sync(this.url(), this)
+        this.realtimeSync = sync(this.url, this)
     }
 
     // this will be called when the model gets sync data

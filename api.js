@@ -98,7 +98,10 @@ module.exports = class API {
 
     finishResponse(req, res, resp){
 
-        if( req.query.display !== undefined && resp && resp.path ){
+        if( resp && resp.sendFile ){
+            res.sendFile(resp.sendFile)
+            
+        }else if( req.query.display !== undefined && resp && resp.path ){
             let path = (req.query.display === 'preview' && resp.previewPath) || resp.path
             res.sendFile(path)
 

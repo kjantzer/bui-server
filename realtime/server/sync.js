@@ -64,6 +64,17 @@ module.exports = class Sync extends Map {
 
     onConnection(socket){
 
+        socket.on('disconnecting', ()=>{
+            for( let path in socket.rooms ){
+
+                let classInstance = this.getClassFor(path, socket)
+
+                if( classInstance && classInstance.syncClientDidLeave)
+                    classInstance.syncClientDidLeave(socket)
+            }
+            
+        })
+
         // when a new socket joins, listen for requests to "join" a particular path
         socket.on('join', async (path)=>{
             
@@ -80,6 +91,9 @@ module.exports = class Sync extends Map {
             if( !classInstance.syncPath ) return console.error('Class does have `syncPath` set')
 
             socket.join(classInstance.syncPath)
+
+            if( classInstance.syncClientDidJoin )
+                classInstance.syncClientDidJoin(socket)
         });
 
         // listen for the socket to request leaving 
@@ -89,6 +103,9 @@ module.exports = class Sync extends Map {
             if( !classInstance ) return console.warn('cannot leave:', path, '; does not exist')
 
             socket.leave(classInstance.syncPath)
+
+            if( classInstance.syncClientDidLeave )
+                classInstance.syncClientDidLeave(socket)
         });
     }
     

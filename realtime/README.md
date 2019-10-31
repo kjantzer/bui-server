@@ -21,6 +21,13 @@ class Book {
         // then sync the data to all clients
         this.syncData(attrs)
     }
+
+    // this method is added by Sync
+    // syncData(data){}
+
+    // optionally implement these methods to take action
+    syncClientDidJoin(socket){}
+    syncClientDidLeave(socket){}
 }
 
 sync.add('/api/book/:id', Book)

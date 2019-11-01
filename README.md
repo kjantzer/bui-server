@@ -100,9 +100,9 @@ module.exports = class MyModel extends Model {
         // defaults to noop
     }
 
-    findSql(){
+    findSql(where){
         // this is the default query
-        return /*sql*/`SELECT * FROM ${this.config.table}`
+        return /*sql*/`SELECT * FROM ${this.config.table} ${where}`
     }
 
     findParseRow(row){

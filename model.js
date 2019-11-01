@@ -14,8 +14,8 @@ module.exports = class Model {
         // add or manipulate the where clause
     }
 
-    findSql(){
-        return /*sql*/`SELECT * FROM ${this.config.table}`
+    findSql(where){
+        return /*sql*/`SELECT * FROM ${this.config.table} ${where}`
     }
 
     findParseRow(row){
@@ -99,7 +99,7 @@ module.exports = class Model {
 
         where = whereFields.length > 0 ? `WHERE ${whereFields.join(' AND ')}` : ''
 
-        let resp = await db.query(`${this.findSql()} ${where}`, whereVals)
+        let resp = await db.query(this.findSql(where), whereVals)
 
         // parse each row (for decoding JSON strings, etc)
         await Promise.all(resp.map(row=>{

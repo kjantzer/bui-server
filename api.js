@@ -61,7 +61,7 @@ module.exports = class API {
             let model = new Class(req.params, req)
 
             if( 'canAccess' in model && await model.canAccess === false )
-                return res.status(401).send({error: 'unauthorized', code: 401})
+                return res.status(403).send({error: 'unauthorized', code: 403})
 
 			try{
                 let args = []
@@ -75,6 +75,10 @@ module.exports = class API {
                 this.finishResponse(req, res, resp)                
 
 			}catch(err){
+
+                if( err.name == 'AccessError' )
+                    return res.status(err.code).send({error: err.message, code: err.code})
+                    
                 console.log(err.stack)
                 let code = err.name == 'Error' ? 400 : 500
                 res.status(code).send({

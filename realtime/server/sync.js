@@ -31,15 +31,31 @@ module.exports = class Sync extends Map {
             }
         });
 
-        Class.prototype.syncData = function(data){
+        Class.prototype.syncData = function(data, toClients){
 
             if( !this.syncPath ) return console.error('Class does have `syncPath` set')
 
-            io.to(this.syncPath).emit('sync', {
-                path: this.syncPath,
-                socketIDs: this.req.socketIDs || [],
-                data: data
-            })
+            if( toClients ){
+                let room = io.adapter.rooms[this.syncPath]
+                if( !room ) return
+
+                for( let socketID in io.sockets ){
+                    let socket = io.sockets[socketID]
+                    if( socket.rooms[this.syncPath] && toClients(socket)){
+                        socket.emit('sync', {
+                            path: this.syncPath,
+                            socketIDs: this.req.socketIDs || [],
+                            data: data
+                        })
+                    }   
+                }
+            }else{
+                io.to(this.syncPath).emit('sync', {
+                    path: this.syncPath,
+                    socketIDs: this.req.socketIDs || [],
+                    data: data
+                })
+            }
         }
     }
 

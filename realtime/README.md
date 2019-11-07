@@ -20,10 +20,17 @@ class Book {
 
         // then sync the data to all clients
         this.syncData(attrs)
+
+        // if you want to control which clients in the sync room you can like this:
+        this.syncData(attrs, socket=>{
+            if( socket.id == 'someid' )
+                return true
+            return false
+        })
     }
 
     // this method is added by Sync
-    // syncData(data){}
+    // syncData(data, toClients){}
 
     // optionally implement these methods to take action
     syncClientDidJoin(socket){}

@@ -1,3 +1,4 @@
+const UrlPattern = require('url-pattern')
 
 const DEFAULT_OPTS = {
     root: ''
@@ -20,6 +21,20 @@ module.exports = class API {
 			if( !Class.api || !Class.api.routes )
                 return console.warn('! API: class must specify `api.routes`')
 
+            let path = Class.api.root
+            if( this.opts.root )
+                path = this.opts.root + path
+            path += '/:id'
+
+            Class.prototype.apiPathPattern = new UrlPattern(path)
+            Class.prototype.apiPathPattern.path = path
+
+            Object.defineProperty(Class.prototype, 'apiPath', {
+                get: function apiPath() {
+                    return this.apiPathPattern.stringify(this)
+                }
+            });
+
 			Class.api.routes.forEach(this.setupRoute.bind(this, Class))
 
             if( Class.api.sync )
@@ -29,15 +44,7 @@ module.exports = class API {
 
     setupSync(Class){
         if( !this.opts.sync ) return console.error('`sync` not given')
-
-        let path = Class.api.root
-
-        if( this.opts.root )
-            path = this.opts.root + path
-
-        path += '/:id'
-
-        Class.prototype.sync = this.opts.sync.add(path, Class)
+        Class.prototype.sync = this.opts.sync.add(Class.prototype.apiPathPattern, Class)
     }
 
 	setupRoute(Class, route){

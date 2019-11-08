@@ -12,14 +12,17 @@ module.exports = class Sync extends Map {
 
     add(path, Class){
 
-        let pathPattern = new UrlPattern(path)
+        if( path instanceof UrlPattern )
+            this.set(path, Class)
+        else{
+            let pathPattern = new UrlPattern(path)
         
-        this.set(pathPattern, Class)
+            this.set(pathPattern, Class)
+            // store reference to sync path pattern
+            Class.prototype.syncPathPattern = pathPattern
+        }
 
         let io = this.io
-
-        // store reference to sync path pattern
-        Class.prototype.syncPathPattern = pathPattern
 
         // create a syncPath getter that will use the sync path pattern
         // and create a string using the class attributres
@@ -27,13 +30,15 @@ module.exports = class Sync extends Map {
         if( Class.prototype.syncPath === undefined )
         Object.defineProperty(Class.prototype, 'syncPath', {
             get: function syncPath() {
-                return this.syncPathPattern.stringify(this)
+                return this.apiPath || this.syncPathPattern.stringify(this)
             }
         });
 
         Class.prototype.syncData = function(data, toClients){
 
             if( !this.syncPath ) return console.error('Class does have `syncPath` set')
+
+            let socketIDs = this.req.socketIDs || []
 
             if( toClients ){
                 let room = io.adapter.rooms[this.syncPath]
@@ -44,7 +49,7 @@ module.exports = class Sync extends Map {
                     if( socket.rooms[this.syncPath] && toClients(socket)){
                         socket.emit('sync', {
                             path: this.syncPath,
-                            socketIDs: this.req.socketIDs || [],
+                            socketIDs: socketIDs,
                             data: data
                         })
                     }   
@@ -52,7 +57,7 @@ module.exports = class Sync extends Map {
             }else{
                 io.to(this.syncPath).emit('sync', {
                     path: this.syncPath,
-                    socketIDs: this.req.socketIDs || [],
+                    socketIDs: socketIDs,
                     data: data
                 })
             }

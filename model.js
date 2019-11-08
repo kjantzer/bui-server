@@ -15,7 +15,7 @@ module.exports = class Model {
     }
 
     findSql(where){
-        return /*sql*/`SELECT * FROM ${this.config.table} ${where}`
+        return /*sql*/`SELECT * FROM ${this.config.table} ${this.config.tableAlias} ${where}`
     }
 
     findParseRow(row){
@@ -93,8 +93,23 @@ module.exports = class Model {
         let whereVals = []
 
         for( let key in where ){
-            whereFields.push(`${key} = ?`)
-            whereVals.push(where[key])
+            let val = where[key]
+
+            if( ['IS NULL', 'IS NOT NULL'].includes(val) ){
+                whereFields.push(`${key} ${val}`)
+            }else{
+
+                let oper = '='
+
+                if( typeof val == 'string' ){
+                    let [str, customOper, _val] = val.match(/((?:(?:!=)|(?:[><]=?)) )?(.+)/)
+                    oper = customOper || oper
+                    val = _val 
+                }
+                
+                whereFields.push(`${key} ${oper} ?`)
+                whereVals.push(val)
+            }
         }
 
         where = whereFields.length > 0 ? `WHERE ${whereFields.join(' AND ')}` : ''
@@ -127,10 +142,10 @@ module.exports = class Model {
 
         let result = await db.q(/*sql*/`INSERT INTO ${this.config.table} SET ?`, attrs)
         
-        if( !result.insertId )
+        if( !result.insertId && !result.affectedRows )
             throw Error('failed to insert')    
 
-        this.id = result.insertId
+        this.id = result.insertId || this.id
         return await this.find()
     }
 

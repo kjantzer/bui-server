@@ -15,7 +15,7 @@ module.exports = class Model {
     }
 
     findSql(where){
-        return /*sql*/`SELECT * FROM ${this.config.table} ${this.config.tableAlias} ${where}`
+        return /*sql*/`SELECT * FROM ${this.config.table} ${this.config.tableAlias||''} ${where}`
     }
 
     findParseRow(row){

@@ -41,7 +41,7 @@ export class Sync extends Map {
         
         // FIXME: change to one call that opens all
         if( this.hasConnected )
-            this.forEach(syncPath=>{syncPath.connect()})
+            this.forEach(syncPath=>{syncPath.reconnect()})
         
         this.hasConnected = true
     }

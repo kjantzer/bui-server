@@ -13,8 +13,14 @@ export default class SyncPath extends Map {
     add(object){
         this.set(object, object)
     }
+
+    reconnect(){
+        if( !this.isConnected ) return
+        this.connect()
+    }
     
     connect(){
+        console.log('connect to book realtime?', this.path);
         this.isConnected = true
         this.socket.emit('join', this.path)
     }

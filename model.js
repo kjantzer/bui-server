@@ -18,6 +18,13 @@ module.exports = class Model {
         return /*sql*/`SELECT * FROM ${this.config.table} ${this.config.tableAlias||''} ${where}`
     }
 
+    get findLimit(){
+        if( this.req.query.perPage )
+            return `LIMIT ${this.req.query.pageAt},${this.req.query.perPage}`
+            
+        return ''
+    }
+
     findParseRow(row){
         return row
     }
@@ -57,6 +64,39 @@ module.exports = class Model {
 
     toJSON(){
         return !this.id ? [] : this.attrs
+    }
+
+    get filters(){
+        try {
+            return this.req.query.filters ? JSON.parse(this.req.query.filters) : {}
+        }catch(err){
+            console.log('Malformed filters:', this.req.query.filters);
+            return {}
+        }
+    }
+
+    get sorts(){    
+        try{
+            return this.req.query.sorts ? JSON.parse(this.req.query.sorts) : {}
+        }catch(err){
+            console.log('Malformed filters:', this.req.query.filters);
+            return {}
+        }
+    }
+
+    orderBy(fn){
+        let sorts = this.sorts
+        let orderBy = []
+        for(let key in sorts ){
+            
+            let sortOpts = sorts[key]
+            let desc = sortOpts.desc ? 'DESC' : 'ASC'
+
+            if( !fn || fn(key, sortOpts) === undefined )
+                orderBy.push(`${this.db.escape(key)} ${desc}`)
+        }
+
+        return orderBy.length > 0 ? 'ORDER BY '+orderBy.join(', ') : ''
     }
 
 // =================================================

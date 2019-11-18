@@ -47,6 +47,10 @@ module.exports = class DB {
     format(...args){
 		return mysql.format.apply(mysql, args)
 	}
+    
+    escape(...args){
+		return mysql.escape.apply(mysql, args)
+	}
 
 }
 

@@ -24,7 +24,7 @@ module.exports = class API {
             let path = Class.api.root
             if( this.opts.root )
                 path = this.opts.root + path
-            path += '/:id'
+            path += '(/:'+(Class.api.idParam||'id')+')'
 
             Class.prototype.apiPathPattern = new UrlPattern(path)
             Class.prototype.apiPathPattern.path = path

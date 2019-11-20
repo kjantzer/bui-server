@@ -50,6 +50,7 @@ class MyClass {
     // required
     static get api(){return {
         root: null // optional root to append to each route path
+        idParam: 'id' // used in creation of apiPathPattern (used by Sync)
         routes: [
             ['get', '/url-path', 'methodName']
         ]

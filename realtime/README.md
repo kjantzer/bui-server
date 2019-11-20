@@ -32,6 +32,10 @@ class Book {
     // this method is added by Sync
     // syncData(data, toClients){}
 
+    // the getter will defined by Sync unless you explicitly create it
+    // can be a single string or array of strings
+    // get syncPath(){ return '/sync/path' }
+
     // optionally implement these methods to take action
     syncClientDidJoin(socket){}
     syncClientDidLeave(socket){}

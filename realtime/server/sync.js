@@ -39,26 +39,35 @@ module.exports = class Sync extends Map {
             if( !this.syncPath ) return console.error('Class does have `syncPath` set')
 
             let socketIDs = this.req.socketIDs || []
+            let syncPaths = this.syncPath
+
+            if( !Array.isArray(syncPaths) )
+                syncPaths = [syncPaths]
 
             if( toClients ){
-                let room = io.adapter.rooms[this.syncPath]
-                if( !room ) return
 
-                for( let socketID in io.sockets ){
-                    let socket = io.sockets[socketID]
-                    if( socket.rooms[this.syncPath] && toClients(socket)){
-                        socket.emit('sync', {
-                            path: this.syncPath,
-                            socketIDs: socketIDs,
-                            data: data
-                        })
-                    }   
-                }
+                syncPaths.forEach(path=>{
+                    let room = io.adapter.rooms[path]
+                    if( !room ) return
+
+                    for( let socketID in io.sockets ){
+                        let socket = io.sockets[socketID]
+                        if( socket.rooms[path] && toClients(socket)){
+                            socket.emit('sync', {
+                                path: path,
+                                socketIDs: socketIDs,
+                                data: data
+                            })
+                        }   
+                    }
+                })
             }else{
-                io.to(this.syncPath).emit('sync', {
-                    path: this.syncPath,
-                    socketIDs: socketIDs,
-                    data: data
+                syncPaths.forEach(path=>{
+                    io.to(path).emit('sync', {
+                        path: path,
+                        socketIDs: socketIDs,
+                        data: data
+                    })
                 })
             }
         }
@@ -111,7 +120,7 @@ module.exports = class Sync extends Map {
             // syncPath should have been set by the `.add` method above
             if( !classInstance.syncPath ) return console.error('Class does have `syncPath` set')
 
-            socket.join(classInstance.syncPath)
+            socket.join(path)
 
             if( classInstance.syncClientDidJoin )
                 classInstance.syncClientDidJoin(socket)
@@ -123,7 +132,7 @@ module.exports = class Sync extends Map {
 
             if( !classInstance ) return console.warn('cannot leave:', path, '; does not exist')
 
-            socket.leave(classInstance.syncPath)
+            socket.leave(path)
 
             if( classInstance.syncClientDidLeave )
                 classInstance.syncClientDidLeave(socket)

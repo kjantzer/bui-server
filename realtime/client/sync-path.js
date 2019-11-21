@@ -20,7 +20,6 @@ export default class SyncPath extends Map {
     }
     
     connect(){
-        console.log('connect to book realtime?', this.path);
         this.isConnected = true
         this.socket.emit('join', this.path)
     }

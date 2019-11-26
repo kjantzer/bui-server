@@ -66,6 +66,8 @@ module.exports = class API {
 
 			// let c = this.init(Class)
             let model = new Class(req.params, req)
+            model.req = req
+            model.res = res
 
             if( 'canAccess' in model && await model.canAccess === false )
                 return res.status(403).send({error: 'unauthorized', code: 403})
@@ -109,16 +111,19 @@ module.exports = class API {
 
     finishResponse(req, res, resp){
 
+        if( resp && resp.constructor && resp.constructor.name == 'Archiver' )
+            return
+
         if( resp && resp.sendFile ){
             res.sendFile(resp.sendFile)
             
         }else if( req.query.display !== undefined && resp && resp.path ){
-            let path = (req.query.display === 'preview' && resp.previewPath) || resp.path
+            let path = (req.query.display === 'preview' && resp.previewPath) || (resp.displayPath || resp.path)
             res.sendFile(path)
 
         }else if( req.query.download !== undefined && resp && resp.path ){
             let path = (req.query.download === 'preview' && resp.previewPath) || resp.path
-            res.download(path, req.query.filename)
+            res.download(path, (req.query.filename||resp.downloadFilename))
 
         }else{
             res.send(resp)

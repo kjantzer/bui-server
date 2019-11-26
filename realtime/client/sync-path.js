@@ -24,10 +24,14 @@ export default class SyncPath extends Map {
         this.socket.emit('join', this.path)
     }
 
-    close(){
+    disconnect(){
         this.isConnected = false
         this.socket.emit('leave', this.path)
     }
+
+    // aliases
+    open(){ return this.connect() }
+    close(){ return this.disconnect() }
 
     onSync(data){
         // this.emit('change', data)

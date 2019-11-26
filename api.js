@@ -26,7 +26,7 @@ module.exports = class API {
                 path = this.opts.root + path
             path += '(/:'+(Class.api.idParam||'id')+')'
 
-            Class.prototype.apiPathPattern = new UrlPattern(path)
+            Class.prototype.apiPathPattern = new UrlPattern(path, {segmentNameCharset: 'a-zA-Z0-9_'})
             Class.prototype.apiPathPattern.path = path
 
             Object.defineProperty(Class.prototype, 'apiPath', {

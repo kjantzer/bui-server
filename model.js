@@ -33,6 +33,10 @@ module.exports = class Model {
         return attrs
     }
 
+    afterAdd(attrs){
+        // noop
+    }
+
     beforeDestroy(){
         // nothing to do
     }
@@ -183,9 +187,12 @@ module.exports = class Model {
         let result = await db.q(/*sql*/`INSERT INTO ${this.config.table} SET ?`, attrs)
         
         if( !result.insertId && !result.affectedRows )
-            throw Error('failed to insert')    
+            throw Error('failed to insert')
 
         this.id = result.insertId || this.id
+
+        this.afterAdd&&this.afterAdd(attrs)
+
         return await this.find()
     }
 

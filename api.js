@@ -116,7 +116,12 @@ module.exports = class API {
 
         if( resp && resp.sendFile ){
             res.sendFile(resp.sendFile)
-            
+
+        }else if( req.query.downloadReq && req.headers['user-agent'].match('iPhone') ){
+            let path = (req.query.download === 'preview' && resp.previewPath) || resp.path
+            // res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
+            res.download(path, (req.query.filename||resp.downloadFilename))
+
         }else if( req.query.display !== undefined && resp && resp.path ){
             let path = (req.query.display === 'preview' && resp.previewPath) || (resp.displayPath || resp.path)
             res.sendFile(path)

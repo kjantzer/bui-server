@@ -8,10 +8,18 @@
         "type": "git",
         "url": "https://github.com/kjantzer/bui-server"
     },
-    "scripts": {},
+    "scripts": {
+        "build-docs": "./node_modules/.bin/docpress build",
+        "build-pages": "npm run build && npm run build-docs-script && npm run build-docs",
+        "publish-pages": "cd ./public && git add -A && git commit -m 'publish docs' && git push Github HEAD:gh-pages",
+        "build-and-publish-pages": "npm run build-pages && npm run publish-pages"
+    },
     "keywords": [],
     "author": "Kevin Jantzer, Blackstone Publishing",
     "license": "MIT",
+    "devDependencies": {
+        "docpress": "github:kjantzer/docpress#prod"
+    },
     "dependencies":{
         "socket.io": "^2.3.0",
         "url-pattern": "^1.0.3"

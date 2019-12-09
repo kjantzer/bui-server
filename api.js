@@ -61,7 +61,7 @@ module.exports = class API {
 
         args.push(async (req, res)=>{
 
-            if( !req.isAuthenticated() )
+            if( Class.api.requiresAutentication !== false && !req.isAuthenticated() )
                 return res.status(401).send({error: 'session expired', code: 401})
 
 			// let c = this.init(Class)
